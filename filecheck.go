@@ -27,7 +27,6 @@ func LoadConfiguration(file string) Config {
 }
 
 func main() {
-
 	config := LoadConfiguration("config.json")
 	fmt.Println(config.FileLocation)
 	fileInfo, err := os.Stat(config.FileLocation)
@@ -35,6 +34,7 @@ func main() {
 		fmt.Println(fileInfo)
 		fmt.Println(fileInfo.Size())
 		if fileInfo.Size() > config.MaxFileSize {
+			fmt.Println(fileInfo.Size())
 			fmt.Println("larger than max ")
 			t := time.Now()
 			tf := t.Format("2006-01-02")
