@@ -3,17 +3,15 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"os"
 	"time"
 )
 
 type Config struct {
-	Database struct {
-		Host     string `json:"host"`
-		Password string `json:"password"`
-	} `json:"database"`
-	Host string `json:"host"`
-	Port string `json:"port"`
+	FileLocation      string `json:"FileLocation"`
+	BlankFileLocation string `json:"BlankFileLocation"`
+	MaxFileSize       int64  `json:"MaxFileSize"`
 }
 
 func LoadConfiguration(file string) Config {
@@ -30,11 +28,28 @@ func LoadConfiguration(file string) Config {
 
 func main() {
 
-	t := time.Now()
-	tf := t.Format("2006/01/02")
-	fmt.Println(tf)
 	config := LoadConfiguration("config.json")
-	fmt.Println(config)
-	info, _ := os.Stat("test.txt")
-	fmt.Println(info)
+	fmt.Println(config.FileLocation)
+	fileInfo, err := os.Stat(config.FileLocation)
+	if err == nil {
+		fmt.Println(fileInfo)
+		fmt.Println(fileInfo.Size())
+		if fileInfo.Size() > config.MaxFileSize {
+			fmt.Println("larger than max ")
+			t := time.Now()
+			tf := t.Format("2006-01-02")
+
+			fmt.Println(tf)
+			os.Rename(config.FileLocation, tf+"_"+config.FileLocation)
+			originalFile, _ := os.Open(config.BlankFileLocation)
+			newFile, _ := os.Create(config.FileLocation)
+			io.Copy(newFile, originalFile)
+		} else {
+			fmt.Println("file smaller than max")
+			fmt.Println("exiting ")
+		}
+	} else {
+		fmt.Println(err)
+	}
+
 }
