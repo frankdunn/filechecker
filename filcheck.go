@@ -38,11 +38,14 @@ func main() {
 			fmt.Println("larger than max ")
 			t := time.Now()
 			tf := t.Format("2006-01-02")
-
-			fmt.Println(tf)
+			fmt.Println("renaming  file ")
 			os.Rename(config.FileLocation, tf+"_"+config.FileLocation)
-			originalFile, _ := os.Open(config.BlankFileLocation)
+			originalFile, err := os.Open(config.BlankFileLocation)
+			if err != nil {
+				print(err)
+			}
 			newFile, _ := os.Create(config.FileLocation)
+
 			io.Copy(newFile, originalFile)
 		} else {
 			fmt.Println("file smaller than max")
