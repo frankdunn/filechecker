@@ -41,11 +41,11 @@ func main() {
 			fmt.Println("renaming  file ")
 			os.Rename(config.FileLocation, tf+"_"+config.FileLocation)
 			originalFile, err := os.Open(config.BlankFileLocation)
+			defer originalFile.Close()
 			if err != nil {
 				print(err)
 			}
 			newFile, _ := os.Create(config.FileLocation)
-
 			io.Copy(newFile, originalFile)
 		} else {
 			fmt.Println("file smaller than max")
